@@ -6,6 +6,15 @@ import scala.collection.mutable
 
 // All Side effects/mutable state are encapsulated here
 
+
+/*
+Idea for maintaining the ten second summaries -
+It appears that messages do not come in more than a couple of seconds out of order, so
+will build up, from the start, the stats for seconds 0-9 and 10-19 and then bump the head
+from the queue. At the end, we'll just print whatever we have. Can also keep track of
+"lastPrintedSummaryTimetamp" but I really want to figure out a way to handle all this mutable state.
+
+ */
 class Logger(firstLogLine: LogLine) {
 
   private val summaryIncrement = 10
