@@ -1,6 +1,6 @@
 package mjn.logger.models
 
-case class TimestampMap(map: Map[Long, Int], timeRange: Int = 120) {
+case class TimestampMap(map: Map[Long, Int] = Map.empty, timeRange: Int = 120) {
 
   def update(nextLogLine: LogLine): TimestampMap = {
     val cullThreshold = timeRange + 10

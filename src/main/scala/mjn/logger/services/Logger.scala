@@ -1,19 +1,32 @@
 package mjn.logger.services
 
-import mjn.logger.models.{Alert, LogGroupStats}
+import mjn.logger.models.{Alert, LogGroupStats, LogLine, LoggerState}
 
-// I don't have to mutate anything at all, just have methods that accept what's
-// current and return the new state
+import scala.collection.mutable
 
-class Logger {
-  type Summary = (LogGroupStats, String)
-  private def read = ???
-  private def appendResource(resources: Map[String, LogGroupStats], resource: LogGroupStats): Map[String, LogGroupStats] = ???
-  private def buildTimeSeries(ts: Map[Long, Int]): Map[Long, Int] = ???
-  private def getAlerts(alerts: List[Alert]): List[Alert] = ???
-  private def bumpFromTimeSeries(ts: Map[Long, Int], time: Long): Map[Long, Int] = ???
-  private def generateAlert(ts: Map[Long, Int], time: Long): Option[Alert] = ???
-  private def provideSummary(stats: List[LogGroupStats]): List[_] = ???
+// All Side effects/mutable state are encapsulated here
+
+class Logger(firstLogLine: LogLine) {
+
+  private val summaryIncrement = 10
+  private val summaryTolerance = 5
+
+  private var appState: LoggerState = LoggerState(nextLogLine = firstLogLine)
+
+  private val startTimestamp = firstLogLine.date
+
+  private val statsMap = mutable.Map.empty[Long, LogGroupStats]
+
+  def getStatsFromMap(timestamp: Long): LogGroupStats = {
+    statsMap.find(_._1 + summaryIncrement <= timestamp)
+
+  }
+
+  def update(logLine: LogLine): LoggerState = {
+    appState = appState.update(logLine)
+    if ((logLine.date - firstLogLine.date) % summaryIncrement == 0)
+
+  }
 
 
 
