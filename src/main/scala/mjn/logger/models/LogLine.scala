@@ -1,5 +1,4 @@
 package mjn.logger.models
-
 import java.text.SimpleDateFormat
 
 final case class LogLine(remoteHost: String,

@@ -1,5 +1,8 @@
 package mjn.logger.models
+import cats._
+import cats.implicits._
 
+//maybe add start and end timesetamps, when constructing a "log group stats"
 final case class LogGroupStats(count: Int = 0,
                                count404: Int = 0,
                                count500: Int = 0,
@@ -21,3 +24,19 @@ final case class LogGroupStats(count: Int = 0,
 
   def mostFrequent: String = requestMap.toSeq.maxBy(_._2)._1
 }
+
+object LogGroupStats {
+  implicit val logGroupStatsMonoid: Monoid[LogGroupStats] = new Monoid[LogGroupStats] {
+    def combine(x: LogGroupStats, y: LogGroupStats): LogGroupStats = {
+      val count = x.count + y.count
+      val count404 = x.count404 + y.count404
+      val count500 = x.count500 + y.count500
+      val avgSize = (x.avgSize * x.count) |+| (y.avgSize * y.count) / count
+      val timestamp = x.timestamp
+      val requestMap = x.requestMap |+| y.requestMap
+      LogGroupStats(count, count404, count500, avgSize, timestamp, requestMap)
+    }
+    def empty: LogGroupStats = LogGroupStats()
+  }
+}
+
