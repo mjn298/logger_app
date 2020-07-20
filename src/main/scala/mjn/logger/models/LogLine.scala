@@ -1,8 +1,8 @@
 package mjn.logger.models
 import java.text.SimpleDateFormat
 
-final case class LogLine(remoteHost: String,
-                         authUser: String,
+final case class LogLine(remotehost: String,
+                         authuser: String,
                          date: Long,
                          request: String,
                          status: String,

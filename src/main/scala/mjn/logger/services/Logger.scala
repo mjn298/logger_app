@@ -1,5 +1,6 @@
 package mjn.logger.services
-
+import cats._
+import cats.implicits._
 import mjn.logger.models.{Alert, LogGroupStats, LogLine, LoggerState}
 
 import scala.collection.mutable
@@ -15,7 +16,7 @@ from the queue. At the end, we'll just print whatever we have. Can also keep tra
 "lastPrintedSummaryTimetamp" but I really want to figure out a way to handle all this mutable state.
 
  */
-class Logger(firstLogLine: LogLine) {
+class Logger[F[_]: Monad]() {
 
   private val summaryIncrement = 10
   private val summaryTolerance = 5

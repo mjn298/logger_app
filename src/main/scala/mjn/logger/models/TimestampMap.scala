@@ -14,4 +14,5 @@ case class TimestampMap(map: Map[Long, Int] = Map.empty, timeRange: Int = 120) {
   def provideAverage(currTimestamp: Long) : Double =
     map.filter(_._1 >= currTimestamp - timeRange).foldLeft(0.0){_ + _._2} / timeRange
 
+
 }
