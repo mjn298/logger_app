@@ -1,18 +1,22 @@
 package mjn.logger.models
 
+import cats.effect.IO
+
 import scala.collection.immutable.ListMap
 
 case class LoggerState(alert: Alert = Alert(),
                        stats: ListMap[Long, LogGroupStats] = ListMap.empty,
-                       tsMap: TimestampMap = TimestampMap()) {
+                       tsMap: TimestampMap = TimestampMap(),
+                       toPrint: IO[Unit] = IO.unit) {
 
   def update(logLine: LogLine): LoggerState = {
     val newStats = updateStatsMap(logLine)
     val newMap = tsMap.update(logLine)
     LoggerState(
       alert = alert.checkAlert(newMap.provideAverage(logLine.date), logLine.date),
-      stats = getSummaryToPrint(newStats),
-      tsMap = newMap)
+      stats = newStats,
+      tsMap = newMap
+    )
   }
 
   def identity: LoggerState = this
@@ -24,14 +28,23 @@ case class LoggerState(alert: Alert = Alert(),
     }
   }
 
-  def getTotal: Int = stats.values.foldLeft(0)(_ + _.count)
+//  def getTotal: IO[Int] = stats.map( _.values.foldLeft(0)(_ + _.count))
 
-  def getSummaryToPrint(statsMap: ListMap[Long, LogGroupStats]): ListMap[Long, LogGroupStats] = {
-    if (stats.size > 2) {
-      println(statsMap.head)
+  private def printSummary(stats: ListMap[Long, LogGroupStats]): IO[Unit] =
+    if(stats.size > 2) IO { println(stats.head) }
+    else IO.unit
+
+  private def cullMap(statsMap: ListMap[Long, LogGroupStats]): ListMap[Long, LogGroupStats] = {
+    if (statsMap.size > 2) {
       statsMap.tail
     } else {
       statsMap
     }
   }
+  
+  def cullAndPrint: IO[ListMap[Long, LogGroupStats]] = for {
+    n <- cullMap(stats)
+    _ <- printSummary(stats)
+  } yield n
+
 }

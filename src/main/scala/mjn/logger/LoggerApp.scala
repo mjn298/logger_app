@@ -6,7 +6,7 @@ import cats._
 import cats.implicits._
 import cats.effect._
 import fs2.Stream
-import fs2.io
+import fs2.io._
 import fs2.text
 import fs2._
 import info.fingo.spata.{CSVParser, CSVRecord, Maybe}
@@ -40,7 +40,7 @@ object LoggerApp extends IOApp {
 //      val printIf5 = Applicative[IO].whenA(ctr == 0)(IO(println(row.toString)))
 //      val action = printIf5 >> IO({}).as(nextCtr -> row)
 //      action
-      printTotal >> IO().as(nextState -> row)
+      IO().as(nextState -> row)
     })
 
 
