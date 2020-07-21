@@ -16,13 +16,11 @@ import mjn.logger.models.{LogLine, LoggerState}
 import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.io.Source
+import mjn.logger.services.Logger
 
 object LoggerApp extends IOApp {
-  def run(args: List[String]): IO[ExitCode] = {
-    records.compile.drain.unsafeRunSync()
-
-    IO[ExitCode](ExitCode.Success)
-  }
+  def run(args: List[String]): IO[ExitCode] =
+    records.compile.drain.as(ExitCode.Success)
 
   implicit val cs = IO.contextShift(global)
   val parser: CSVParser[IO] = CSVParser[IO]()
@@ -33,14 +31,14 @@ object LoggerApp extends IOApp {
     .map(_.to[LogLine]())
     .evalMapAccumulate(LoggerState())((loggerState, row) => {
       val nextState = row match {
-        case Right(logLine) => loggerState.update(logLine)
-        case _ => loggerState.identity
+        case Right(logLine) => Logger.updateAndPrintStats(loggerState, logLine)
+        case _ => IO(loggerState)
       }
-      val printTotal = Applicative[IO].whenA(true)(IO{println(loggerState.getTotal)})
+//      val printTotal = Applicative[IO].whenA(true)(IO{println(loggerState.getTotal)})
 //      val printIf5 = Applicative[IO].whenA(ctr == 0)(IO(println(row.toString)))
 //      val action = printIf5 >> IO({}).as(nextCtr -> row)
 //      action
-      IO().as(nextState -> row)
+     nextState.map(_ -> row)
     })
 
 

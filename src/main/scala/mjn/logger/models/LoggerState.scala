@@ -6,8 +6,8 @@ import scala.collection.immutable.ListMap
 
 case class LoggerState(alert: Alert = Alert(),
                        stats: ListMap[Long, LogGroupStats] = ListMap.empty,
-                       tsMap: TimestampMap = TimestampMap(),
-                       toPrint: IO[Unit] = IO.unit) {
+                       tsMap: TimestampMap = TimestampMap()
+                       ) {
 
   def update(logLine: LogLine): LoggerState = {
     val newStats = updateStatsMap(logLine)
@@ -43,7 +43,7 @@ case class LoggerState(alert: Alert = Alert(),
   }
   
   def cullAndPrint: IO[ListMap[Long, LogGroupStats]] = for {
-    n <- cullMap(stats)
+    n <- IO(cullMap(stats))
     _ <- printSummary(stats)
   } yield n
 

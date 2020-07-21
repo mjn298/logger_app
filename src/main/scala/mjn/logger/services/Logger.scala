@@ -1,5 +1,6 @@
 package mjn.logger.services
 import cats._
+import cats.effect.IO
 import cats.implicits._
 import mjn.logger.models.{Alert, LogGroupStats, LogLine, LoggerState}
 
@@ -17,9 +18,9 @@ from the queue. At the end, we'll just print whatever we have. Can also keep tra
 
  */
 object Logger {
-  def updateAndPrintStats(loggerState: LoggerState, logLine: LogLine) = {
-    val updated = loggerState.update(logLine)
-
+  def updateAndPrintStats(loggerState: LoggerState, logLine: LogLine): IO[LoggerState] = {
+//    val updated = loggerState.update(logLine)
+      ???
   }
 //  private var appState: LoggerState = LoggerState(nextLogLine = firstLogLine)
 //
