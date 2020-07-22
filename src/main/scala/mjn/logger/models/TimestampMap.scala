@@ -9,20 +9,21 @@ case class TimestampMap(map: Map[Long, Int] = Map.empty, timeRange: Int = 120) {
      */
     val cullThreshold = timeRange + 10
     val incrementedCount: Int =  map.getOrElse(nextLogLine.date, 0) + 1
-    if(map.size > cullThreshold) {
-      val timestampsToRemove = map.keys.filter(_ < nextLogLine.date - cullThreshold)
+    val newMap = map + (nextLogLine.date -> incrementedCount)
+    if(newMap.size > cullThreshold) {
+      val timestampsToRemove = newMap.keys.filter(_ < nextLogLine.date - cullThreshold.toLong)
       TimestampMap(
-        map = (map -- timestampsToRemove) + (nextLogLine.date -> incrementedCount),
+        map = newMap -- timestampsToRemove,
         timeRange = timeRange)
     }
     else {
       TimestampMap(
-        map = map + (nextLogLine.date -> incrementedCount),
+        map = newMap,
         timeRange = timeRange
       )
     }
   }
 
   def provideTotal(currTimestamp: Long): Int =
-    map.filter(_._1 > currTimestamp - timeRange).foldLeft(0){_ + _._2}
+    map.filter(_._1 >= currTimestamp - timeRange).foldLeft(0){_ + _._2}
 }

@@ -32,7 +32,11 @@ object LoggerApp extends IOApp {
     Stream
       .bracket(
         //Change this resource path to evaluate a different log file.
-        IO {Source.fromResource("sample_csv.txt")})(source => IO {source.close()})
+        IO {
+          Source.fromResource("sample_csv.txt")
+        })(source => IO {
+        source.close()
+      })
       .through(reader[IO].by)
       .through(parser.parse)
       .map(_.to[LogLine]())
