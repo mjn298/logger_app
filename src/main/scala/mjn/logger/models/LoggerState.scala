@@ -49,8 +49,5 @@ case class LoggerState(alert: Alert = Alert(),
     }
   }
 
-  def formatSummary(stats: LogGroupStats): String = {
-    val topRequest = stats.requestMap.maxBy(_._2)._1
-    s"Timestamp: ${stats.timestamp} - Req Count: ${stats.count} - 500s: ${stats.count500} - 404s: ${stats.count404} - Top Req: /$topRequest"
-  }
+
 }
