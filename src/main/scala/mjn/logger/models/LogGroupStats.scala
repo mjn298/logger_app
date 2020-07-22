@@ -3,6 +3,16 @@ package mjn.logger.models
 import cats._
 import cats.implicits._
 
+/**
+ * LogGroupStats is the state container for each ten second interval. Every log line results in
+ * a new state.
+ * @param count
+ * @param count404
+ * @param count500
+ * @param avgSize
+ * @param timestamp
+ * @param requestMap
+ */
 final case class LogGroupStats(count: Int = 0,
                                count404: Int = 0,
                                count500: Int = 0,
@@ -28,6 +38,7 @@ final case class LogGroupStats(count: Int = 0,
   def mostFrequent: String = requestMap.toSeq.maxBy(_._2)._1
 }
 
+//This is not used but I'm keeping it for when I figure out how to better use Cats.
 object LogGroupStats {
   implicit val logGroupStatsMonoid: Monoid[LogGroupStats] = new Monoid[LogGroupStats] {
     def combine(x: LogGroupStats, y: LogGroupStats): LogGroupStats = {

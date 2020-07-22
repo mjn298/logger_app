@@ -4,7 +4,8 @@ case class TimestampMap(map: Map[Long, Int] = Map.empty, timeRange: Int = 120) {
 
   def update(nextLogLine: LogLine): TimestampMap = {
     /*
-    This culling occurs to keep the timestamp map at a reasonable size
+    This culling occurs to keep the timestamp map at a reasonable size,
+    since we don't care about anything before curr - 2 minutes
      */
     val cullThreshold = timeRange + 10
     val incrementedCount: Int =  map.getOrElse(nextLogLine.date, 0) + 1
@@ -24,9 +25,4 @@ case class TimestampMap(map: Map[Long, Int] = Map.empty, timeRange: Int = 120) {
 
   def provideTotal(currTimestamp: Long): Int =
     map.filter(_._1 > currTimestamp - timeRange).foldLeft(0){_ + _._2}
-
-  def provideAverage(currTimestamp: Long) : Double =
-    map.filter(_._1 > currTimestamp - timeRange).foldLeft(0.0){_ + _._2} / timeRange
-
-
 }

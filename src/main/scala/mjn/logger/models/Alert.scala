@@ -4,6 +4,14 @@ final case class Alert(active: Boolean = false, created: Option[Long] = None, th
 
   private def getAvg(totalReqs: Int): Double = totalReqs / 120.0
 
+  /**
+   *
+   * @param totalReqs
+   * @param currTimestamp
+   * @param range
+   * @return a boolean indicating whether 2 minutes have passed since the alert was triggered,
+   *         and if the average of the last 2 minutes is below the threshold
+   */
   def alertRecovered(totalReqs: Int, currTimestamp: Long, range: Int): Boolean = {
     val notExceeded = getAvg(totalReqs) < threshold
     val enoughTimeElapsed = created match {
@@ -13,6 +21,15 @@ final case class Alert(active: Boolean = false, created: Option[Long] = None, th
     notExceeded && enoughTimeElapsed
   }
 
+  /**
+   *
+   * @param totalReqs
+   * @param currTimestamp
+   * @param range
+   * @return a current instance of Alert. This is pattern matching syntax,
+   *         using the current average, the flag returned from alertRecovered,
+   *         and the last state of alert to determine what the next state needs to be.
+   */
   def checkAlert(totalReqs: Int, currTimestamp: Long, range: Int = 120): Alert = {
     val isExceeded = getAvg(totalReqs) >= threshold
     val recovered = alertRecovered(totalReqs, currTimestamp, range)

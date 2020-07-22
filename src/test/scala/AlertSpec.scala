@@ -7,7 +7,7 @@ import scala.util.Random
 class AlertSpec extends AnyFlatSpec with should.Matchers{
 
   private def buildMap(randMin: Int, randMax: Int, start: Int, size: Int) = {
-    val map = (start.toLong until start + size).map(_ -> Random.between(randMin, randMax)).toMap
+    val map = (start.toLong until start.toLong + size.toLong).map(_ -> Random.between(randMin, randMax)).toMap
     val total = map.values.sum
     (map, total)
   }
@@ -16,7 +16,7 @@ class AlertSpec extends AnyFlatSpec with should.Matchers{
     val mapSize = 120
     val (_, mapTotal) = buildMap(0, 10, 1, 120)
     val alert = Alert()
-    val updatedAlert = alert.checkAlert(mapTotal, mapSize, mapSize)
+    val updatedAlert = alert.checkAlert(mapTotal, mapSize.toLong, mapSize)
     updatedAlert.active should be (false)
     updatedAlert.created should be (None)
     updatedAlert.total should be (mapTotal)
@@ -27,7 +27,7 @@ class AlertSpec extends AnyFlatSpec with should.Matchers{
     val mapSize = 120
     val (_, mapTotal) = buildMap(10, 50, 1, mapSize)
     val alert = Alert()
-    val updatedAlert = alert.checkAlert(mapTotal, mapSize, mapSize)
+    val updatedAlert = alert.checkAlert(mapTotal, mapSize.toLong, mapSize)
     updatedAlert.active should be (true)
     updatedAlert.created should be (Some(120))
     updatedAlert.total should be (mapTotal)
