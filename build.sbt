@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   "co.fs2" %% "fs2-io" % "2.4.0",
   "info.fingo" %% "spata" % "0.8.0",
   "org.scalactic" %% "scalactic" % "3.2.0",
-  "org.scalatest" %% "scalatest" % "3.2.0" % "test"
+  "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.0" % "test",
+  "org.scalatest" %% "scalatest-flatspec" % "3.2.0" % "test"
 )
 
