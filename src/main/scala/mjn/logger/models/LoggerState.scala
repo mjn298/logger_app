@@ -39,7 +39,13 @@ case class LoggerState(alert: Alert = Alert(),
   /**
    *
    * @param statsMap
-   * @return I couldn't figure out how to handle the
+   * @return A tuple of a maybe updated stats map, and an Optional ten second summary. There is a bug here.
+   *         In inspecting the data, I saw that requests might come in out of order, and I can't guarantee that
+   *         all ten seconds of requests will come in before the 11th second does - so, I allow a maximum of two sets of 10 sec summaries.
+   *         When the third one starts (ie, n0 + 20), I pop the Summ0 off the queue, and indicate that it should be printed.
+   *         You will see the consequence of this decision - the final two 10 second summaries are not printed in the output.
+   *         I haven't yet figured out how to "flush state" after processing an FS2 stream - that's the next thing I'll explore.
+   *         In a way, the output is "eventually" consistent with the input, and with an infinite stream there would be no "end state" to flush.
    */
   private def cullMap(statsMap: ListMap[Long, LogGroupStats]): (ListMap[Long, LogGroupStats], Option[LogGroupStats]) = {
     if (statsMap.size > 2) {

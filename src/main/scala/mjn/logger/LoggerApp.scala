@@ -13,11 +13,16 @@ import scala.io.Source
 object LoggerApp extends IOApp {
 
   def run(args: List[String]): IO[ExitCode] = {
-    val threshold = args.headOption match {
-      case Some(s) => s.toInt
-      case None => 10
+    args.headOption match {
+      case Some(s) => try {
+        val threshold = s.toInt
+        records(threshold).compile.drain.as(ExitCode.Success)
+      } catch {
+        case _ : Exception => IO( println(s"Any argument must be parsable to an Int. '$s' was provided, and is invalid." )).as(ExitCode.Error)
+      }
+      case None =>
+        records(10).compile.drain.as(ExitCode.Success)
     }
-    records(threshold).compile.drain.as(ExitCode.Success)
   }
 
   implicit val cs = IO.contextShift(global)
@@ -26,6 +31,7 @@ object LoggerApp extends IOApp {
     val initialAlert = Alert(threshold = threshold)
     Stream
       .bracket(
+        //Change this resource path to evaluate a different log file.
         IO {Source.fromResource("sample_csv.txt")})(source => IO {source.close()})
       .through(reader[IO].by)
       .through(parser.parse)
