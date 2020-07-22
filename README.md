@@ -52,3 +52,12 @@ and you should be able to run it from IntelliJ directly after installing its Sca
 everything from within, by default the past 130 seconds remains in the map. I do this to keep the in-memory storage to
 a reasonable size. The tolerance exists to accommodate out of order requests, so I don't miss an alert. In a real application, with this service running concurrently in many different hosts, I'd probably use a Key Value store as a cache.
 Otherwise, the application is pretty simple and most of the operations are just incrementing values by 1. 
+
+## Total Time Spent:
+I'd estimate I spent 4 hours actually coding this. I was fluent in several aspects of the application, and those were done quite quickly.
+In total with learning the libraries, I spent around 20-25 hours watching presentations on cats effect and FS2, 
+working through reference materials, and experimenting. I would have done that eventually anyway - 
+this just provided a catalyst to learn I've been wanting to for a while. 
+To be frank, when given an assignment like this, I'm inclined to use it as a sandbox
+for new (to me) techniques. 
+
