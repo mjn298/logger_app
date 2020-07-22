@@ -1,6 +1,7 @@
 #Logger App
 as an aside - I regret how large the JAR file is. As I write this, I'm hoping it doesn't exceed the 
-attachment limit.
+attachment limit.  
+there is a .git dir in here - it's in a private GH repo, nothing public. 
 ## Usage:
 This requires the current LTS JDK 11, it will certainly fail with JDK 8 (I tried) 
 and will probably fail with anything in between.
