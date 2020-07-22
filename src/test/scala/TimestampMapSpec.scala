@@ -21,7 +21,6 @@ class TimestampMapSpec extends AnyFlatSpec with should.Matchers{
   }
 
   "Timestamp Map" should "cull when length exceeds threshold + buffer" in {
-//    val start = 0L
     val threshold = 120
     val buffer = 10
     val newTimestamp = 131L

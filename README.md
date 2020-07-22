@@ -7,6 +7,12 @@ and will probably fail with anything in between.
 From a shell, run `./run.sh`. It will prompt you to enter a "requests per second" threshold. As specified, the
 default is 10. 
 
+### Testing:
+There are a couple of unit tests, for the Alerting logic and the data structure supporting the alerting logic.
+These are run as part of the packaging step (`sbt assembly`). The easiest way to run them is with intellij's scala plugin,
+and importing the SBT project. I test the four alert states (cartesian product of two booleans; isActive and isExceeded), 
+as well as the proper updating of the TimestampMap. 
+
 ## Observations:
 1. Due to the fact that alert state is updated per request (not per second of requests), the hit count when an alert becomes active
 will always be threshold * 120. I couldn't think of another way to handle alerts coming in out of order, 
@@ -42,7 +48,8 @@ a project suiting them quite well.
 As per the specification, the file is streamed, and not read into working memory. 
 
 ## Improvements:
-- This is not tested nearly enough. The alerting state logic is tested as requested. There's a lot I'd like to cover
+- This is not tested nearly enough. The alerting state logic is tested as requested. Additionally, I tested the TimestampMap, because its
+correctness is essential to the Alerting's proper functioning, and its code is the most likely to face bugs. There's a lot more I'd like to cover
 (anything involving arithmetic). Ease of testing is a major motivation to avoid mutation and restrict side-effectful
 code to a small part of the app (in this case, the `Logger` object). Were this a production application, I'd test everything. 
 - I should make the input path configurable so that you can try different files without recompiling... or worse, having to
@@ -54,10 +61,10 @@ a reasonable size. The tolerance exists to accommodate out of order requests, so
 Otherwise, the application is pretty simple and most of the operations are just incrementing values by 1. 
 
 ## Total Time Spent:
-I'd estimate I spent 4 hours actually coding this. I was fluent in several aspects of the application, and those were done quite quickly.
-In total with learning the libraries, I spent around 20-25 hours watching presentations on cats effect and FS2, 
-working through reference materials, and experimenting. I would have done that eventually anyway - 
-this just provided a catalyst to learn I've been wanting to for a while. 
-To be frank, when given an assignment like this, I'm inclined to use it as a sandbox
-for new (to me) techniques. 
+I'd estimate I spent 4-6 hours actually coding this. I was fluent in several aspects of the application, and those were done quite quickly.
+Determing proper (or just working) usage of some novel things made this take longer. 
+
+I spent much more time working through reference materials, and experimenting. I would have done that eventually anyway,
+this project just happened to be a good application for these techniques. 
+
 
