@@ -1,25 +1,28 @@
 package mjn.logger.models
+
 import cats._
 import cats.implicits._
 
-//maybe add start and end timesetamps, when constructing a "log group stats"
 final case class LogGroupStats(count: Int = 0,
                                count404: Int = 0,
                                count500: Int = 0,
                                avgSize: Double = 0.0,
                                timestamp: Long = 0L,
                                requestMap: Map[String, Int] = Map.empty
-                               ) {
+                              ) {
   def update(logLine: LogLine): LogGroupStats = {
-    val incrementedCount = requestMap.getOrElse(logLine.request, 0) + 1
-
+    val incrementedCount = requestMap.getOrElse(formatRequest(logLine.request), 0) + 1
     LogGroupStats(
       count = count + 1,
       count404 = if (logLine.status == "404") count404 + 1 else count404,
       count500 = if (logLine.status == "500") count500 + 1 else count500,
       avgSize = avgSize + ((logLine.bytes - avgSize) / (count + 1)),
-      timestamp =  if (timestamp == 0L) logLine.date else timestamp,
-      requestMap = requestMap + (logLine.request -> incrementedCount))
+      timestamp = if (timestamp == 0L) logLine.date else timestamp,
+      requestMap = requestMap + (formatRequest(logLine.request) -> incrementedCount))
+  }
+
+  def formatRequest(input: String): String = {
+    input.split(" ")(1).split("/")(1)
   }
 
   def mostFrequent: String = requestMap.toSeq.maxBy(_._2)._1
@@ -36,6 +39,7 @@ object LogGroupStats {
       val requestMap = x.requestMap |+| y.requestMap
       LogGroupStats(count, count404, count500, avgSize, timestamp, requestMap)
     }
+
     def empty: LogGroupStats = LogGroupStats()
   }
 }

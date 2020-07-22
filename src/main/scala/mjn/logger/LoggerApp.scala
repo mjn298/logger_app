@@ -1,22 +1,14 @@
 package mjn.logger
 
-import java.nio.file.Path
-
-import cats._
-import cats.implicits._
 import cats.effect._
 import fs2.Stream
-import fs2.io._
-import fs2.text
-import fs2._
-import info.fingo.spata.{CSVParser, CSVRecord, Maybe}
 import info.fingo.spata.io._
+import info.fingo.spata.{CSVParser, Maybe}
 import mjn.logger.models.{LogLine, LoggerState}
+import mjn.logger.services.Logger
 
-import scala.io.Source
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.io.Source
-import mjn.logger.services.Logger
 
 object LoggerApp extends IOApp {
   def run(args: List[String]): IO[ExitCode] =
@@ -25,7 +17,11 @@ object LoggerApp extends IOApp {
   implicit val cs = IO.contextShift(global)
   val parser: CSVParser[IO] = CSVParser[IO]()
   val records: Stream[IO, (LoggerState, Maybe[LogLine])] = Stream
-    .bracket(IO { Source.fromResource("sample_csv.txt") })(source => IO { source.close() })
+    .bracket(IO {
+      Source.fromResource("sample_csv.txt")
+    })(source => IO {
+      source.close()
+    })
     .through(reader[IO].by)
     .through(parser.parse)
     .map(_.to[LogLine]())
@@ -34,29 +30,6 @@ object LoggerApp extends IOApp {
         case Right(logLine) => Logger.updateAndPrintStats(loggerState, logLine)
         case _ => IO(loggerState)
       }
-//      val printTotal = Applicative[IO].whenA(true)(IO{println(loggerState.getTotal)})
-//      val printIf5 = Applicative[IO].whenA(ctr == 0)(IO(println(row.toString)))
-//      val action = printIf5 >> IO({}).as(nextCtr -> row)
-//      action
-     nextState.map(_ -> row)
+      nextState.map(_ -> row)
     })
-
-
-  //  def main(args: Array[String]): Unit = {
-  //    val bufferedSource = getClass.getResourceAsStream("/sample_csv.txt")
-  //    val lines = scala.io.Source.fromInputStream(bufferedSource)
-  //  }
-  //
-  //  def readLogLine(line: String): LogLine = {
-  //    val cols = line.split(",").map(_.trim)
-  //    LogLine(cols(0), cols(2), cols(3).toLong, cols(4), cols(5), cols(6).toInt)
-  //  }
-  //
-  //  @tailrec
-  //  def process(lines: LazyList[String], state: LoggerState): LogGroupStats = {
-  //    if(lines.isEmpty) state.stats
-  //    else {
-  //      process(lines.tail, state.update(readLogLine(lines.head)))
-  //    }
-  //  }
 }
