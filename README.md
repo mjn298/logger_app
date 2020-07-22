@@ -26,7 +26,7 @@ but once the welding happens (please excuse this extended metaphor) the data can
 unfamiliarity with the library - not the library itself. The data is consumed in one pass, and events are emitted as soon as application state
 demands.  
 
-##Philosophy:
+## Philosophy:
 There is absolutely no mutation in this application. Each log line results in a new state. That was done both as 
 an exercise, and with an eye towards concurrency, if request info is being fielded from a number of different sources, there will be problems.
 The LogGroupStats can be seen as a path towards CRDT with a "combine" operation. My preference in designing applications is to
@@ -41,7 +41,7 @@ a project suiting them quite well.
 
 As per the specification, the file is streamed, and not read into working memory. 
 
-##Improvements:
+## Improvements:
 - This is not tested nearly enough. The alerting state logic is tested as requested. There's a lot I'd like to cover
 (anything involving arithmetic). Ease of testing is a major motivation to avoid mutation and restrict side-effectful
 code to a small part of the app (in this case, the `Logger` object). Were this a production application, I'd test everything. 
