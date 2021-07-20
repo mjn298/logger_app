@@ -61,11 +61,5 @@ everything from within, by default the past 130 seconds remains in the map. I do
 a reasonable size. The tolerance exists to accommodate out of order requests, so I don't miss an alert. In a real application, with this service running concurrently in many different hosts, I'd probably use a Key Value store as a cache.
 Otherwise, the application is pretty simple and most of the operations are just incrementing values by 1. 
 
-## Total Time Spent:
-I'd estimate I spent 4-6 hours actually coding this. I was fluent in several aspects of the application, and those were done quite quickly.
-Determing proper (or just working) usage of some novel things made this take longer. 
-
-I spent much more time working through reference materials, and experimenting. I would have done that eventually anyway,
-this project just happened to be a good application for these techniques. 
 
 
